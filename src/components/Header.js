@@ -11,60 +11,8 @@ import {
   Button,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {Badge} from 'react-native-paper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import moment from 'moment';
 
-import {announceList} from '../utils/announceList';
-
-// Import API Calls
-import {getAnnouncements} from '../admin/AnnApi';
-
-const Header = ({route, navigation}) => {
-  const [lastOpenVariable, setLastOpenVariable] = useState('');
-  const [lastOpenVariable1, setLastOpenVariable1] = useState('');
-  const [showBadge, setShowBadge] = useState(true);
-  const [badgeValue, setBadgeValue] = useState(0);
-  const [flagValue, setFlagValue] = useState(true);
-  const [dummy, setDummy] = useState('A');
-  const [isLoading, setIsLoading] = useState(false);
-  const [announcements, setAnnouncements] = useState([]);
-  const [tempValue, setTempValue] = useState(false);
-
-  const preloadAnnouncements = () => {
-    setIsLoading(true);
-    getAnnouncements().then(data => {
-      // console.log("API Data : ", data);
-      if (data.error) {
-        Snackbar.show('Error fetching Announcements', 'Try again');
-      } else {
-        // console.log(data);
-        const arr = data.filter(ann => ann.isPublished && ann.publishedDate);
-        setAnnouncements(arr);
-        console.log('Ann Length', announcements.length);
-        setIsLoading(false);
-      }
-    });
-  };
-
-  const getLastOpenData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('lastAnOpen');
-      if (value !== null) {
-        // console.log(
-        //   '=> [HomeScreen] READ - Last Open Announcement Page : ',
-        //   value,
-        // );
-        setLastOpenVariable(value);
-      }
-      // else {
-      //   storeLastOpenData(moment().valueOf().toString());
-      // }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
+const Header = () => {
   const onShare = async () => {
     try {
       const result = await Share.share({

@@ -17,6 +17,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '../components/Header';
 import ContactCard from '../components/ContactCard';
 
+import {sendSms} from '../utils/sendSms';
+
 const AddFab = ({navigation}) => {
   return (
     <TouchableOpacity
@@ -37,6 +39,7 @@ const HomeScreen = ({navigation, route}) => {
   const dummyArray = Array.from({length: 6}, (v, k) => k);
   const [locationData, setLocationData] = useState();
   const [contacts, setContacts] = useState([]);
+  const [allphones, setAllphones] = useState([]);
 
   console.log('Location', locationData);
 
@@ -54,6 +57,11 @@ const HomeScreen = ({navigation, route}) => {
     }
   };
 
+  const getAllPhones = async () => {
+    // extract phoneNumber property from contact list
+    const allPhones = contacts.map(contact => contact.phoneNumber);
+    setAllphones(allPhones);
+  };
   useEffect(async () => {
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -112,8 +120,14 @@ const HomeScreen = ({navigation, route}) => {
   }, []);
 
   useEffect(() => {
+    getAllPhones();
+  }, [contacts, locationData]);
+
+  useEffect(() => {
     readContacts();
   }, []);
+
+  console.log('All phones,', allphones);
 
   return (
     <>
@@ -123,7 +137,12 @@ const HomeScreen = ({navigation, route}) => {
             <Header navigation={navigation} route={route} />
             <View style={{height: 60, backgroundColor: '#fff'}}></View>
             <View style={styles.iconContainer}>
-              <Icon style={styles.icon} name="location-outline" size={30} />
+              <Icon
+                style={styles.icon}
+                name="location-outline"
+                size={30}
+                color="#c00000"
+              />
               <Text style={styles.locationText}>
                 {locationData ? (
                   <Text>
@@ -134,14 +153,48 @@ const HomeScreen = ({navigation, route}) => {
                 )}
               </Text>
             </View>
-            {contacts &&
-              contacts.map((item, index) => (
-                <ContactCard
-                  key={index}
-                  name={item.name}
-                  phone={item.phoneNumber}
-                />
-              ))}
+            <TouchableOpacity
+              style={styles.iconContainer}
+              onPress={() => {
+                sendSms(
+                  contacts.map(contact => contact.phoneNumber),
+                  locationData.latitude,
+                  locationData.longitude,
+                );
+              }}>
+              <Icon
+                style={styles.icon}
+                name="chatbox-ellipses-outline"
+                size={30}
+                color="#2e3e7e"
+              />
+              <Text style={styles.locationText}>Send SMS</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.iconContainer}
+              onPress={readContacts}>
+              <Icon style={styles.icon} name="sync" size={20} color="green" />
+              <Text style={styles.locationText}>Refresh</Text>
+            </TouchableOpacity>
+            {contacts ? (
+              <>
+                {contacts.map((item, index) => (
+                  <ContactCard
+                    key={index}
+                    name={item.name}
+                    phone={item.phoneNumber}
+                  />
+                ))}
+              </>
+            ) : (
+              <View style={styles.noContacts}>
+                <Text style={styles.noContactsText}>No Contacts Added.</Text>
+                <Text style={styles.noContactsText}>
+                  Please add your Emergency Contact
+                </Text>
+              </View>
+            )}
+
             <View style={{height: 100}}></View>
           </>
         </View>
@@ -157,7 +210,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: '#fff',
-    // height: Dimensions.get('window').height,
+    height: Dimensions.get('window').height * 1.5,
   },
   container1: {
     // flex: 1,
@@ -180,14 +233,20 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     flexDirection: 'row',
+    marginTop: 5,
   },
   locationText: {
     fontSize: 20,
     marginLeft: 10,
   },
-  icon: {
-    color: 'red',
-    fontSize: 30,
+  noContacts: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+    height: Dimensions.get('window').height * 0.7,
+  },
+  noContactsText: {
+    fontSize: 17,
   },
 
   landscapeImage: {

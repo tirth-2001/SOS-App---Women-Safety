@@ -13,10 +13,6 @@ import Snackbar from 'react-native-snackbar';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Import API
-import {createPlayer} from '../admin/PlayerApi';
-import {getGames} from '../admin/GamesApi';
-
 const AddContact = ({navigation}) => {
   const [name, setName] = React.useState('');
   const [phoneNumber, setPhoneNumber] = React.useState('');
@@ -51,6 +47,10 @@ const AddContact = ({navigation}) => {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    readContacts();
+  }, []);
 
   const clearForm = forSubmit => {
     // const [clearConf, setClearConf] = useState(false);
