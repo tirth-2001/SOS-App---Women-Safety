@@ -2,6 +2,15 @@
   package="com.sosapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+    <permission
+            android:name="android.permission.ACCESS_COARSE_LOCATION"
+            android:protectionLevel="signature" />
+        <permission
+                android:name="android.permission.ACCESS_FINE_LOCATION"
+                android:protectionLevel="signature"/>
 
     <application
       android:name=".MainApplication"

@@ -1,0 +1,1 @@
+curl --include --header "Authorization: Basic NjQyNTk4MjUtYmQ2MC00N2RjLWIwYzQtNjJhMzFiY2NhZTg4" "https://onesignal.com/api/v1/players?app_id=6504f9bd-9178-4642-a552-fc57346ace55"
